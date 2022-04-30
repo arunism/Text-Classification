@@ -19,7 +19,7 @@ class Dataset:
     
     def _write_to_file(self) -> None:
         data_l = self._read_file()
-        outfile = str(self._file.split('.')[0]) + '.csv' 
+        outfile = os.path.join(BASE_DIR, 'data.csv')
         df = pd.DataFrame(data_l, columns=['Title', 'Genre', 'Summary'])
         df[df.columns] = df.apply(lambda x: x.str.strip())
         df.to_csv(outfile, index=False)
