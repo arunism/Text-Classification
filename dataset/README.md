@@ -1,4 +1,7 @@
-### Prepare your dataset
+## Prepare your dataset
+
+Prepare your dataset, as intended, before proceeding to the task
+
 
 * Download dataset from [kaggle](https://www.kaggle.com/datasets/hijest/genre-classification-dataset-imdb)
 * Run python3 dataset.py

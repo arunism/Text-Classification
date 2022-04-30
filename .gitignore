@@ -1,6 +1,7 @@
 # project specific
 *.json
 *.txt
+*.csv
 
 # exclude data from source control by default
 tensorboard/
