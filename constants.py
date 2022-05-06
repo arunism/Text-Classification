@@ -1,0 +1,12 @@
+MODEL = 'lstm'
+EPOCHS = 2
+LEARNING_RATE = 0.001
+OPTIMIZER = 'adam'
+SEQUENCE_LEN = 100
+EMBEDDING_SIZE = 200
+HIDDEN_SIZE = [256]
+BATCH_SIZE = 128
+VOCAB_SIZE = 10000
+DATA_PATH = 'dataset/train.txt'
+STOPWORD_PATH = 'dataset/stopwords.txt'
+OUTPUT_PATH = 'outputs/'
