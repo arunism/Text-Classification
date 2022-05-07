@@ -1,4 +1,7 @@
 import os
+import re
+from collections import Counter
+from tracemalloc import stop
 from constants import TEXT_HEADER, LABEL_HEADER
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -12,17 +15,42 @@ class DataBase:
         self._vocab_size = constant.VOCAB_SIZE
         self._embedding_size = constant.EMBED_SIZE
         self._batch_size = constant.BATCH_SIZE
+        self._min_word_count = constant.MIN_WORD_COUNT
     
     def read_data(self, data):
-        inputs = data[TEXT_HEADER].map(str)
+        text = data[TEXT_HEADER].map(str)
         labels = data[LABEL_HEADER].map(str)
-        return inputs.tolist(), labels.tolist()
+        return text.tolist(), labels.tolist()
+
+    def clean_punct(self, sentence):
+        cleanr = re.compile('<.*?>')
+        sentence = re.sub(cleanr, ' ', sentence)
+        sentence = re.sub(r'[?|$|.|!]',r'', sentence)
+        sentence = re.sub(r'[.|,|)|(|\|/]',r' ', sentence)
+        sentence = re.sub(' +', ' ', sentence)
+        return sentence
+    
+    def clean_text(self, text):
+        words = [word for data in text for word in self.clean_punct(data.lower()).split()]
+        word_count = Counter(words)
+        sorted_words = sorted(word_count.items(), key=lambda x:x[1], reverse=True)
+        words = [item[0] for item in sorted_words if item[1] >= self._min_word_count]
+
+        if self._stop_word_path:
+            with open(self._stop_word_path, 'r', encoding='utf-8') as sw:
+                stopwords = [line.strip() for line in sw.readlines()]
+            words = [word for word in words if word not in stopwords]
+        return words
 
     @staticmethod
-    def trans_to_index(inputs, word_to_index):
+    def trans_to_index(text, word_to_index):
         raise NotImplementedError
     
-    def padding(self, inputs, seq_len):
+    @staticmethod
+    def trans_label_to_index(text, label_to_index):
+        raise NotImplementedError
+    
+    def padding(self, text, seq_len):
         raise NotImplementedError
     
     def generate_data(self):
@@ -35,9 +63,6 @@ class DataBase:
 class TrainDataBase(DataBase):
     def __init__(self, constant) -> None:
         super(TrainDataBase, self).__init__(constant)
-    
-    def remove_stop_words(self, inputs):
-        raise NotImplementedError
     
     def get_word_vectors(self, words):
         raise NotImplementedError

@@ -23,6 +23,8 @@ class Train:
         self.train_data_obj = TrainData(self.constant)
         self.eval_data_obj = EvalData(self.constant)
         self.train_data, self.eval_data = train_test_split(self.data_path)
+        # text, label = self.train_data_obj.read_data(self.train_data)
+        # self.train_data_obj.clean_text(text)
     
     def get_model(self):
         if self.constant.MODEL == 'bilstm':
