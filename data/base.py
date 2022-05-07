@@ -1,8 +1,9 @@
 import os
+from constants import TEXT_HEADER, LABEL_HEADER
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-class Dataset:
+class DataBase:
     def __init__(self, constant) -> None:
         self._output_path = os.path.join(BASE_DIR, constant.OUTPUT_PATH)
         if not os.path.exists(self._output_path): os.makedirs(self._output_path)
@@ -12,8 +13,10 @@ class Dataset:
         self._embedding_size = constant.EMBED_SIZE
         self._batch_size = constant.BATCH_SIZE
     
-    def read_data(self):
-        raise NotImplementedError
+    def read_data(self, data):
+        inputs = data[TEXT_HEADER].map(str)
+        labels = data[LABEL_HEADER].map(str)
+        return inputs.tolist(), labels.tolist()
 
     @staticmethod
     def trans_to_index(inputs, word_to_index):
@@ -29,7 +32,7 @@ class Dataset:
         raise NotImplementedError
 
 
-class TrainDataBase(Dataset):
+class TrainDataBase(DataBase):
     def __init__(self, constant) -> None:
         super(TrainDataBase, self).__init__(constant)
     
@@ -43,7 +46,7 @@ class TrainDataBase(Dataset):
         raise NotImplementedError
 
 
-class EvalDataBase(Dataset):
+class EvalDataBase(DataBase):
     def __init__(self, constant) -> None:
         super(EvalDataBase, self).__init__(constant)
     
