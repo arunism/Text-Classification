@@ -5,7 +5,6 @@
 
 # exclude data from source control by default
 tensorboard/
-/models
 venv
 /venv
 
