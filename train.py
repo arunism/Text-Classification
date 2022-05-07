@@ -1,8 +1,7 @@
 import os
 import constants
-from data.train import TrainData
-from data.eval import EvalData
 from utils.split_data import train_test_split
+from data import TrainData, EvalData
 from models import BiLstmModel, BiLstmAttenModel, RCnnModel, TextCnnModel, TransformerModel
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
