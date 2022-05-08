@@ -22,7 +22,7 @@ class TrainData(DataBase):
             word_vectors[i, :] = vector
             return word_vectors
 
-    def build_vocab(self, words, labels):
+    def _build_vocab(self, words, labels):
         if os.path.exists(os.path.join(self.constant.OUTPUT_PATH, 'word_vectors.npy')):
             self.word_vectors = np.load(os.path.join(self._output_path, "word_vectors.npy"))
         
@@ -46,3 +46,26 @@ class TrainData(DataBase):
         with open(os.path.join(self._output_path, 'word_to_index.pkl'), 'wb') as file: pickle.dump(word_to_index, file)
         with open(os.path.join(self._output_path, 'label_to_index.pkl'), 'wb') as file: pickle.dump(label_to_index, file)
         return word_to_index, label_to_index
+    
+    def generate_train_data(self, data):
+        train_file = os.path.join(self._output_path, 'train_data.pkl')
+        w2i_file = os.path.join(self._output_path, 'word_to_index.pkl')
+        l2i_file = os.path.join(self._output_path, 'label_to_index.pkl')
+        word_vec_file = os.path.join(self._output_path, 'word_vectors.npy')
+
+        if os.path.exists(train_file) and os.path.exists(w2i_file) and os.path.exists(l2i_file):
+            with open(train_file, 'rb') as file: train_data = pickle.load(file)
+            with open(w2i_file, 'rb') as file: word_to_index = pickle.load(file)
+            with open(l2i_file, 'rb') as file: label_to_index = pickle.load(file)
+            if os.path.exists(word_vec_file): self._word_vectors = np.load(word_vec_file)
+            return np.array(train_data['text_idx']), np.array(train_data['label_idx']), label_to_index
+        
+        text, labels = self.read_data(data)
+        words = self.clean_text(text)
+        word_to_index, label_to_index = self._build_vocab(words, labels)
+        text_idx = self.all_text_to_index(text, word_to_index)
+        text_idx = self.padding(text_idx, self._sequence_length)
+        label_idx = self.all_label_to_index(labels, label_to_index)
+        train_data = dict(text_idx, label_idx)
+        with open(train_file, 'wb') as file: pickle.dump(train_data, file)
+        return np.array(text_idx), np.array(label_idx), label_to_index

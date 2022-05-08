@@ -2,7 +2,6 @@ import os
 import re
 from collections import Counter
 from tracemalloc import stop
-from constants import TEXT_HEADER, LABEL_HEADER, WORD_VEC_PATH
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -17,10 +16,12 @@ class DataBase:
         self._embedding_size = constant.EMBED_SIZE
         self._batch_size = constant.BATCH_SIZE
         self._min_word_count = constant.MIN_WORD_COUNT
+        self._text_header = constant.TEXT_HEADER
+        self._label_header = constant.LABEL_HEADER
     
     def read_data(self, data):
-        text = data[TEXT_HEADER].map(str)
-        labels = data[LABEL_HEADER].map(str)
+        text = data[self._text_header].map(str)
+        labels = data[self._label_header].map(str)
         return text.tolist(), labels.tolist()
 
     def clean_punct(self, sentence):
@@ -44,12 +45,17 @@ class DataBase:
         return words
 
     @staticmethod
-    def trans_to_index(text, word_to_index):
-        raise NotImplementedError
+    def all_text_to_index(text, word_to_index):
+        idx = [
+            [word_to_index.get(word, word_to_index['<UNK>']) for word in sentence]
+            for sentence in text
+        ]
+        return idx
     
     @staticmethod
-    def trans_label_to_index(text, label_to_index):
-        raise NotImplementedError
+    def all_label_to_index(labels, label_to_index):
+        idx = [label_to_index[label] for label in labels]
+        return idx
     
     def padding(self, text):
         text = [
@@ -58,9 +64,6 @@ class DataBase:
             for sentence in text
         ]
         return text
-    
-    def generate_data(self):
-        raise NotImplementedError
     
     def next_batch(self, x, y, batch_size):
         raise NotImplementedError
