@@ -39,7 +39,8 @@ class Train:
             self.model = TransformerModel(constant=self.constant, word_vectors=self.word_vectors)
 
     def train(self):
-        pass
+        for epoch in range(self.constant.EPOCHS):
+            print(f'EPOCH: {epoch}/{self.constant.EPOCHS}')
 
 
 if __name__ == '__main__':

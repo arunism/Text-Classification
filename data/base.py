@@ -1,5 +1,7 @@
 import os
 import re
+import pickle
+import numpy as np
 from collections import Counter
 from tracemalloc import stop
 
@@ -64,6 +66,22 @@ class DataBase:
             for sentence in text
         ]
         return text
+
+    def load_vocab(self):
+        w2i_file = os.path.join(self._output_path, 'word_to_index.pkl')
+        l2i_file = os.path.join(self._output_path, 'label_to_index.pkl')
+        with open(w2i_file, 'rb') as file: word_to_index = pickle.load(file)
+        with open(l2i_file, 'rb') as file: label_to_index = pickle.load(file)
+        return word_to_index, label_to_index
     
-    def next_batch(self, x, y, batch_size):
-        raise NotImplementedError
+    def get_batch(self, x, y):
+        a = np.arange(len(x))
+        np.random.shuffle(a)
+        x, y = x[a], y[a]
+        num_of_batches = len(x) // self._batch_size
+        for i in range(num_of_batches):
+            start = i*self._batch_size
+            end = start + self._batch_size
+            batch_x = np.array(x[start:end], dtype='int64')
+            batch_y = np.array(y[start:end], dtype='float32')
+            yield dict(x=batch_x, y=batch_y)
