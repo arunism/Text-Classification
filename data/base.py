@@ -51,8 +51,13 @@ class DataBase:
     def trans_label_to_index(text, label_to_index):
         raise NotImplementedError
     
-    def padding(self, text, seq_len):
-        raise NotImplementedError
+    def padding(self, text):
+        text = [
+            sentence[:self._sequence_length] if len(sentence) > self._sequence_length
+            else sentence + [0]*(self._sequence_length - len(sentence))
+            for sentence in text
+        ]
+        return text
     
     def generate_data(self):
         raise NotImplementedError
