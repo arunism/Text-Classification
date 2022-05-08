@@ -9,6 +9,7 @@ BATCH_SIZE = 128
 VOCAB_SIZE = None
 DATA_PATH = 'dataset/data.csv'
 STOPWORD_PATH = 'stopwords/english.txt'
+WORD_VEC_PATH = 'dataset/GoogleNews-vectors-negative300.bin'
 OUTPUT_PATH = 'results/'
 TEXT_HEADER = 'Summary'
 LABEL_HEADER = 'Genre'

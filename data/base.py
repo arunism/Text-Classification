@@ -2,7 +2,7 @@ import os
 import re
 from collections import Counter
 from tracemalloc import stop
-from constants import TEXT_HEADER, LABEL_HEADER
+from constants import TEXT_HEADER, LABEL_HEADER, WORD_VEC_PATH
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -11,6 +11,7 @@ class DataBase:
         self._output_path = os.path.join(BASE_DIR, constant.OUTPUT_PATH)
         if not os.path.exists(self._output_path): os.makedirs(self._output_path)
         self._stop_word_path = os.path.join(BASE_DIR, constant.STOPWORD_PATH) if constant.STOPWORD_PATH else None
+        self._word_vec_path = os.path.join(BASE_DIR, constant.WORD_VEC_PATH)
         self._sequence_length = constant.SEQUENCE_LEN
         self._vocab_size = constant.VOCAB_SIZE
         self._embedding_size = constant.EMBED_SIZE
