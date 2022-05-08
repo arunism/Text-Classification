@@ -58,22 +58,3 @@ class DataBase:
     
     def next_batch(self, x, y, batch_size):
         raise NotImplementedError
-
-
-class TrainDataBase(DataBase):
-    def __init__(self, constant) -> None:
-        super(TrainDataBase, self).__init__(constant)
-    
-    def get_word_vectors(self, words):
-        raise NotImplementedError
-    
-    def get_vocab(self, words, labels):
-        raise NotImplementedError
-
-
-class EvalDataBase(DataBase):
-    def __init__(self, constant) -> None:
-        super(EvalDataBase, self).__init__(constant)
-    
-    def load_vocab(self):
-        raise NotImplementedError
