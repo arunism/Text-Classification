@@ -18,6 +18,12 @@ class Train:
         self.data_path = self.constant.DATA_PATH
 
         self.load_data()
+        self.train_text, self.train_labels, l2i = self.train_data_obj.generate_data(self.train_data)
+        self.eval_text, self.eval_labels = self.eval_data_obj.generate_data(self.eval_data)
+        self.labels = list(l2i.values())
+        self._vocab_size = self.constant.VOCAB_SIZE
+        self._word_vectors = self.train_data_obj.word_vectors
+        self.get_model()
 
     def load_data(self):
         self.train_data_obj = TrainData(self.constant)
@@ -40,7 +46,9 @@ class Train:
 
     def train(self):
         for epoch in range(self.constant.EPOCHS):
-            print(f'EPOCH: {epoch}/{self.constant.EPOCHS}')
+            print(f'EPOCH: {epoch+1}/{self.constant.EPOCHS}')
+            for batch in self.train_data_obj.get_batch(self.train_text, self.train_labels):
+                pass
 
 
 if __name__ == '__main__':

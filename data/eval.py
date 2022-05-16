@@ -10,7 +10,7 @@ class EvalData(DataBase):
         super(EvalData, self).__init__(constant)
         self.eval_file = os.path.join(self._output_path, 'eval_data.pkl')
     
-    def generate_eval_data(self, data):
+    def generate_data(self, data):
         if os.path.exists(self.eval_file):
             with open(self.eval_file, 'rb') as file: eval_data = pickle.load(file)
             return np.array(eval_data['text_idx']), np.array(eval_data['label_idx'])
