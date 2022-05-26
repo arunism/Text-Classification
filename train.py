@@ -33,9 +33,9 @@ class Train:
         # self.train_data_obj.clean_text(text)
     
     def get_model(self):
-        if self.constant.MODEL == 'bilstm':
+        if self.constant.MODEL == 'lstm':
             self.model = BiLstmModel(constant=self.constant, word_vectors=self.word_vectors)
-        elif self.constant.MODEL == 'bilstm_atten':
+        elif self.constant.MODEL == 'lstm_atten':
             self.model = BiLstmAttenModel(constant=self.constant, word_vectors=self.word_vectors)
         elif self.constant.MODEL == 'rcnn':
             self.model = RCnnModel(constant=self.constant, word_vectors=self.word_vectors)

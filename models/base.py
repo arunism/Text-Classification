@@ -1,4 +1,5 @@
 import torch
+import torch.nn as nn
 
 class BaseModel:
     def __init__(self, constant, word_vectors):
@@ -20,5 +21,7 @@ class BaseModel:
             return torch.optim.SGD(lr=self.constant.LEARNING_RATE)
         return None
     
-    def calculate_loss(self):
-        pass
+    def calculate_loss(self, prediction, target):
+        loss = nn.CrossEntropyLoss()
+        output = loss(prediction, target)
+        return output
