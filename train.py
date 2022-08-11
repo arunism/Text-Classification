@@ -2,9 +2,10 @@ import os
 import constants
 from utils.split_data import train_test_split
 from data import TrainData, EvalData
-from models import BiLstmModel, BiLstmAttenModel, RCnnModel, TextCnnModel, TransformerModel
+from models import LstmModel, LstmAttenModel, RCnnModel, TextCnnModel, TransformerModel
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 class Train:
     def __init__(self) -> None:
@@ -34,9 +35,9 @@ class Train:
     
     def get_model(self):
         if self.constant.MODEL == 'lstm':
-            self.model = BiLstmModel(constant=self.constant, word_vectors=self.word_vectors)
+            self.model = LstmModel(constant=self.constant, word_vectors=self.word_vectors)
         elif self.constant.MODEL == 'lstm_atten':
-            self.model = BiLstmAttenModel(constant=self.constant, word_vectors=self.word_vectors)
+            self.model = LstmAttenModel(constant=self.constant, word_vectors=self.word_vectors)
         elif self.constant.MODEL == 'rcnn':
             self.model = RCnnModel(constant=self.constant, word_vectors=self.word_vectors)
         elif self.constant.MODEL == 'textcnn':

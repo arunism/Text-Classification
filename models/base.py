@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 class BaseModel:
     def __init__(self, constant, word_vectors):
         self.constant = constant

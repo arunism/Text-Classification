@@ -3,9 +3,9 @@ import re
 import pickle
 import numpy as np
 from collections import Counter
-from tracemalloc import stop
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 class DataBase:
     def __init__(self, constant) -> None:
@@ -25,7 +25,8 @@ class DataBase:
         text = data[self._text_header].map(str)
         labels = data[self._label_header].map(str)
         return text.tolist(), labels.tolist()
-
+    
+    @staticmethod
     def clean_punct(self, sentence):
         cleanr = re.compile('<.*?>')
         sentence = re.sub(cleanr, ' ', sentence)
