@@ -12,7 +12,6 @@ class DataBase:
         self._output_path = os.path.join(BASE_DIR, constant.OUTPUT_PATH)
         if not os.path.exists(self._output_path): os.makedirs(self._output_path)
         self._stop_word_path = os.path.join(BASE_DIR, constant.STOPWORD_PATH) if constant.STOPWORD_PATH else None
-        self._word_vec_path = os.path.join(BASE_DIR, constant.WORD_VEC_PATH)
         self._sequence_length = constant.SEQUENCE_LEN
         self._vocab_size = constant.VOCAB_SIZE
         self._embedding_size = constant.EMBED_SIZE
@@ -25,20 +24,19 @@ class DataBase:
         text = data[self._text_header].map(str)
         labels = data[self._label_header].map(str)
         return text.tolist(), labels.tolist()
-    
-    @staticmethod
+
     def clean_punct(self, sentence):
         cleanr = re.compile('<.*?>')
         sentence = re.sub(cleanr, ' ', sentence)
-        sentence = re.sub(r'[?|$|.|!]',r'', sentence)
-        sentence = re.sub(r'[.|,|)|(|\|/]',r' ', sentence)
+        sentence = re.sub(r'[?|$|.|!]', r'', sentence)
+        sentence = re.sub(r'[.|,|)|(|\|/]', r' ', sentence)
         sentence = re.sub(' +', ' ', sentence)
         return sentence
     
     def clean_text(self, text):
         words = [word for data in text for word in self.clean_punct(data.lower()).split()]
         word_count = Counter(words)
-        sorted_words = sorted(word_count.items(), key=lambda x:x[1], reverse=True)
+        sorted_words = sorted(word_count.items(), key=lambda x: x[1], reverse=True)
         words = [item[0] for item in sorted_words if item[1] >= self._min_word_count]
 
         if self._stop_word_path:
