@@ -7,6 +7,7 @@ class BaseModel:
         self.constant = constant
         self.word_vectors = word_vectors
         self.vocab_size = self.constant.VOCAB_SIZE
+        self._embedding_size = constant.EMBED_SIZE
         self.loss = 0.0
     
     def get_optimizer(self):

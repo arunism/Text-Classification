@@ -14,11 +14,12 @@ class DataBase:
         self._stop_word_path = os.path.join(BASE_DIR, constant.STOPWORD_PATH) if constant.STOPWORD_PATH else None
         self._sequence_length = constant.SEQUENCE_LEN
         self._vocab_size = constant.VOCAB_SIZE
-        self._embedding_size = constant.EMBED_SIZE
         self._batch_size = constant.BATCH_SIZE
         self._min_word_count = constant.MIN_WORD_COUNT
         self._text_header = constant.TEXT_HEADER
         self._label_header = constant.LABEL_HEADER
+        self.w2i_file = os.path.join(self._output_path, 'word_to_index.pkl')
+        self.l2i_file = os.path.join(self._output_path, 'label_to_index.pkl')
     
     def read_data(self, data):
         text = data[self._text_header].map(str)
@@ -45,19 +46,6 @@ class DataBase:
             words = [word for word in words if word not in stopwords]
         return words
 
-    @staticmethod
-    def all_text_to_index(text, word_to_index):
-        idx = [
-            [word_to_index.get(word, word_to_index['<UNK>']) for word in sentence]
-            for sentence in text
-        ]
-        return idx
-    
-    @staticmethod
-    def all_label_to_index(labels, label_to_index):
-        idx = [label_to_index[label] for label in labels]
-        return idx
-    
     def padding(self, text):
         text = [
             sentence[:self._sequence_length] if len(sentence) > self._sequence_length
@@ -66,12 +54,60 @@ class DataBase:
         ]
         return text
 
-    def load_vocab(self):
+    def all_text_to_index(self, text, word_to_index):
+        idx = [
+            [word_to_index.get(word, word_to_index['<UNK>']) for word in sentence]
+            for sentence in text
+        ]
+        idx = self.padding(idx)
+        return np.array(idx)
+    
+    @staticmethod
+    def all_label_to_index(labels, label_to_index):
+        idx = [label_to_index[label] for label in labels]
+        return np.array(idx)
+
+    def _load_vocab(self):
         w2i_file = os.path.join(self._output_path, 'word_to_index.pkl')
         l2i_file = os.path.join(self._output_path, 'label_to_index.pkl')
         with open(w2i_file, 'rb') as file: word_to_index = pickle.load(file)
         with open(l2i_file, 'rb') as file: label_to_index = pickle.load(file)
         return word_to_index, label_to_index
+
+    def _build_vocab(self, words, labels):
+        if os.path.exists(self.w2i_file) and os.path.exists(self.l2i_file):
+            word_to_index, label_to_index = self._load_vocab()
+            return word_to_index, label_to_index
+
+        vocab = ['<PAD>', '<UNK>'] + words
+        if not self._vocab_size:
+            self._vocab_size = len(vocab)
+
+        word_to_index = dict(zip(vocab, list(range(self._vocab_size))))
+        label_to_index = dict(zip(list(set(labels)), list(range(len(list(set(labels)))))))
+        with open(self.w2i_file, 'wb') as file:
+            pickle.dump(word_to_index, file)
+        with open(self.l2i_file, 'wb') as file:
+            pickle.dump(label_to_index, file)
+        return word_to_index, label_to_index
+
+    def generate_data(self, data, file, train=False):
+        if os.path.exists(file):
+            with open(file, 'rb') as file: file_data = pickle.load(file)
+            return file_data['text_idx'], file_data['label_idx']
+
+        text, labels = self.read_data(data)
+        text = [self.clean_punct(sentence) for sentence in text]
+        if train:
+            words = self.clean_text(text)
+            word_to_index, label_to_index = self._build_vocab(words, labels)
+        else:
+            word_to_index, label_to_index = self._load_vocab()
+        text_idx = self.all_text_to_index(text, word_to_index)
+        label_idx = self.all_label_to_index(labels, label_to_index)
+        data = dict(text_idx=text_idx, label_idx=label_idx)
+        with open(file, 'wb') as file: pickle.dump(data, file)
+        return text_idx, label_idx
     
     def get_batch(self, x, y):
         a = np.arange(len(x))
