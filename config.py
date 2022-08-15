@@ -4,7 +4,7 @@ EPOCHS = 2
 LEARNING_RATE = 0.001
 # You can choose between ['adam', 'adadelta', 'adagrad', 'rmsprop', 'sgd']
 OPTIMIZER = 'adam'
-SEQUENCE_LEN = 100
+SEQUENCE_LEN = 350
 EMBED_SIZE = 200
 HIDDEN_SIZE = [256]
 BATCH_SIZE = 128

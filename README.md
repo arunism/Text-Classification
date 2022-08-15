@@ -9,7 +9,6 @@ Install required fundamental packages:
 ```
 pip3 install pandas
 pip3 install torch
-pip3 install gensim
 ```
 
 If you wish to go with the same dataset as here, follow the guidelines [here](https://github.com/arunism/Text-Classification/blob/master/dataset/README.md).
@@ -25,6 +24,6 @@ Train your model with:
 
 ## Configuration
 
-You can always manage your project configuration using the file `constants.py`.
+You can always manage your project configuration using the file `config.py`.
 
 `Remember:` This should be done before training your model or it may not work as expected.

@@ -8,16 +8,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 class DataBase:
-    def __init__(self, constant) -> None:
-        self._output_path = os.path.join(BASE_DIR, constant.OUTPUT_PATH)
+    def __init__(self, config) -> None:
+        self._output_path = os.path.join(BASE_DIR, config.OUTPUT_PATH)
         if not os.path.exists(self._output_path): os.makedirs(self._output_path)
-        self._stop_word_path = os.path.join(BASE_DIR, constant.STOPWORD_PATH) if constant.STOPWORD_PATH else None
-        self._sequence_length = constant.SEQUENCE_LEN
-        self._vocab_size = constant.VOCAB_SIZE
-        self._batch_size = constant.BATCH_SIZE
-        self._min_word_count = constant.MIN_WORD_COUNT
-        self._text_header = constant.TEXT_HEADER
-        self._label_header = constant.LABEL_HEADER
+        self._stop_word_path = os.path.join(BASE_DIR, config.STOPWORD_PATH) if config.STOPWORD_PATH else None
+        self._sequence_length = config.SEQUENCE_LEN
+        self._vocab_size = config.VOCAB_SIZE
+        self._batch_size = config.BATCH_SIZE
+        self._min_word_count = config.MIN_WORD_COUNT
+        self._text_header = config.TEXT_HEADER
+        self._label_header = config.LABEL_HEADER
         self.w2i_file = os.path.join(self._output_path, 'word_to_index.pkl')
         self.l2i_file = os.path.join(self._output_path, 'label_to_index.pkl')
     

@@ -1,5 +1,5 @@
 import pandas as pd
-from constants import TRAIN_TEST_SPLIT_RATIO
+from config import TRAIN_TEST_SPLIT_RATIO
 
 
 def train_test_split(data_path, train_ratio=TRAIN_TEST_SPLIT_RATIO):

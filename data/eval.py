@@ -5,5 +5,5 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 class EvalData(DataBase):
-    def __init__(self, constant) -> None:
-        super(EvalData, self).__init__(constant)
+    def __init__(self, config) -> None:
+        super(EvalData, self).__init__(config)
