@@ -13,7 +13,7 @@ class DataBase:
         if not os.path.exists(self._output_path): os.makedirs(self._output_path)
         self._stop_word_path = os.path.join(BASE_DIR, config.STOPWORD_PATH) if config.STOPWORD_PATH else None
         self._sequence_length = config.SEQUENCE_LEN
-        self._vocab_size = config.VOCAB_SIZE
+        self.vocab_size = config.VOCAB_SIZE
         self._batch_size = config.BATCH_SIZE
         self._min_word_count = config.MIN_WORD_COUNT
         self._text_header = config.TEXT_HEADER
@@ -67,7 +67,7 @@ class DataBase:
         idx = [label_to_index[label] for label in labels]
         return np.array(idx)
 
-    def _load_vocab(self):
+    def load_vocab(self):
         w2i_file = os.path.join(self._output_path, 'word_to_index.pkl')
         l2i_file = os.path.join(self._output_path, 'label_to_index.pkl')
         with open(w2i_file, 'rb') as file: word_to_index = pickle.load(file)
@@ -76,14 +76,14 @@ class DataBase:
 
     def _build_vocab(self, words, labels):
         if os.path.exists(self.w2i_file) and os.path.exists(self.l2i_file):
-            word_to_index, label_to_index = self._load_vocab()
+            word_to_index, label_to_index = self.load_vocab()
             return word_to_index, label_to_index
 
         vocab = ['<PAD>', '<UNK>'] + words
-        if not self._vocab_size:
-            self._vocab_size = len(vocab)
+        if not self.vocab_size:
+            self.vocab_size = len(vocab)
 
-        word_to_index = dict(zip(vocab, list(range(self._vocab_size))))
+        word_to_index = dict(zip(vocab, list(range(self.vocab_size))))
         label_to_index = dict(zip(list(set(labels)), list(range(len(list(set(labels)))))))
         with open(self.w2i_file, 'wb') as file:
             pickle.dump(word_to_index, file)
@@ -102,7 +102,7 @@ class DataBase:
             words = self.clean_text(text)
             word_to_index, label_to_index = self._build_vocab(words, labels)
         else:
-            word_to_index, label_to_index = self._load_vocab()
+            word_to_index, label_to_index = self.load_vocab()
         text_idx = self.all_text_to_index(text, word_to_index)
         label_idx = self.all_label_to_index(labels, label_to_index)
         data = dict(text_idx=text_idx, label_idx=label_idx)

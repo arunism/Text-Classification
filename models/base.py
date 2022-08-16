@@ -3,14 +3,16 @@ import torch.nn as nn
 
 
 class BaseModel(nn.Module):
-    def __init__(self, config, word_vectors):
+    def __init__(self, config, word_vectors, vocab_size):
+        super(BaseModel, self).__init__()
         self.config = config
         self.word_vectors = word_vectors
         self.input_size = self.config.SEQUENCE_LEN
-        self.vocab_size = self.config.VOCAB_SIZE
+        self.vocab_size = vocab_size
         self.embedding_size = config.EMBED_SIZE
         self.loss = 0.0
-        # self.embedding = nn.Embedding(self.input_size, self.embedding_size)
+        self.embedding = nn.Embedding(self.vocab_size, self.embedding_size)
+        print(self.embedding)
     
     def get_optimizer(self):
         if self.config.OPTIMIZER == 'adam':
