@@ -12,13 +12,14 @@ class Train:
         self.eval_data_obj = None
         self.model = None
         self.config = config
-        self._vocab_size = self.config.VOCAB_SIZE
         self.data_path = self.config.DATA_PATH
         self._output_path = os.path.join(BASE_DIR, self.config.OUTPUT_PATH)
         self.train_file = os.path.join(self._output_path, 'train_data.pkl')
         self.eval_file = os.path.join(self._output_path, 'eval_data.pkl')
 
         self.load_data()
+        self._vocab_size = self.train_data_obj.vocab_size
+        self._output_size = self.config.OUTPUT_SIZE
         self.train_data, self.eval_data = train_test_split(self.data_path)
         self.train_text, self.train_labels = self.train_data_obj.generate_data(self.train_data, self.train_file,
                                                                                train=True)
@@ -33,17 +34,18 @@ class Train:
         if not self._vocab_size:
             word_to_index, label_to_index = self.train_data_obj.load_vocab()
             self._vocab_size = len(word_to_index)
+            self._output_size = len(label_to_index)
 
         if self.config.MODEL == 'lstm':
-            self.model = LstmModel(self.config, self.train_text, self._vocab_size)
+            self.model = LstmModel(self.config, self.train_text, self._vocab_size, self._output_size)
         elif self.config.MODEL == 'lstm_atten':
-            self.model = LstmAttenModel(self.config, self.train_text, self._vocab_size)
+            self.model = LstmAttenModel(self.config, self.train_text, self._vocab_size, self._output_size)
         elif self.config.MODEL == 'rcnn':
-            self.model = RCnnModel(self.config, self.train_text, self._vocab_size)
+            self.model = RCnnModel(self.config, self.train_text, self._vocab_size, self._output_size)
         elif self.config.MODEL == 'textcnn':
-            self.model = TextCnnModel(self.config, self.train_text, self._vocab_size)
+            self.model = TextCnnModel(self.config, self.train_text, self._vocab_size, self._output_size)
         elif self.config.MODEL == 'transformer':
-            self.model = TransformerModel(self.config, self.train_text, self._vocab_size)
+            self.model = TransformerModel(self.config, self.train_text, self._vocab_size, self._output_size)
 
     def train(self):
         for epoch in range(self.config.EPOCHS):
