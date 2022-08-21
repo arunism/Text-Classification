@@ -37,18 +37,18 @@ class Train:
             self._output_size = len(label_to_index)
 
         if self.config.MODEL == 'lstm':
-            self.model = LstmModel(self.config, self.train_text, self._vocab_size, self._output_size)
+            self.model = LstmModel(self.config, self._vocab_size, self._output_size)
         elif self.config.MODEL == 'lstm_atten':
-            self.model = LstmAttenModel(self.config, self.train_text, self._vocab_size, self._output_size)
+            self.model = LstmAttenModel(self.config, self._vocab_size, self._output_size)
         elif self.config.MODEL == 'rcnn':
-            self.model = RCnnModel(self.config, self.train_text, self._vocab_size, self._output_size)
+            self.model = RCnnModel(self.config, self._vocab_size, self._output_size)
         elif self.config.MODEL == 'textcnn':
-            self.model = TextCnnModel(self.config, self.train_text, self._vocab_size, self._output_size)
+            self.model = TextCnnModel(self.config, self._vocab_size, self._output_size)
         elif self.config.MODEL == 'transformer':
-            self.model = TransformerModel(self.config, self.train_text, self._vocab_size, self._output_size)
+            self.model = TransformerModel(self.config, self._vocab_size, self._output_size)
 
     def train(self):
         for epoch in range(self.config.EPOCHS):
             print(f'EPOCH: {epoch + 1}/{self.config.EPOCHS}')
             for batch in self.train_data_obj.get_batch(self.train_text, self.train_labels):
-                pass
+                self.model(batch['x'])

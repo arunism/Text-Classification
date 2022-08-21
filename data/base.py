@@ -1,5 +1,6 @@
 import os
 import re
+import torch
 import pickle
 import numpy as np
 from collections import Counter
@@ -60,12 +61,12 @@ class DataBase:
             for sentence in text
         ]
         idx = self.padding(idx)
-        return np.array(idx)
+        return np.array(idx, dtype='int64')
     
     @staticmethod
     def all_label_to_index(labels, label_to_index):
         idx = [label_to_index[label] for label in labels]
-        return np.array(idx)
+        return np.array(idx, dtype='float32')
 
     def load_vocab(self):
         w2i_file = os.path.join(self._output_path, 'word_to_index.pkl')
@@ -117,6 +118,6 @@ class DataBase:
         for i in range(num_of_batches):
             start = i*self._batch_size
             end = start + self._batch_size
-            batch_x = np.array(x[start:end], dtype='int64')
-            batch_y = np.array(y[start:end], dtype='float32')
+            batch_x = torch.from_numpy(x[start:end])
+            batch_y = torch.from_numpy(y[start:end])
             yield dict(x=batch_x, y=batch_y)
