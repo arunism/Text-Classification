@@ -51,4 +51,5 @@ class Train:
         for epoch in range(self.config.EPOCHS):
             print(f'EPOCH: {epoch + 1}/{self.config.EPOCHS}')
             for batch in self.train_data_obj.get_batch(self.train_text, self.train_labels):
-                self.model(batch['x'])
+                result = self.model(batch['x'])
+                print(result.shape)

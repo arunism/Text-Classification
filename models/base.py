@@ -15,6 +15,7 @@ class BaseModel(nn.Module):
         self.embedding_size = self.config.EMBED_SIZE
         self.loss = 0.0
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.dropout = nn.Dropout(self.config.DROPOUT)
         self.embedding = nn.Embedding(self.vocab_size, self.embedding_size)
     
     def get_optimizer(self):

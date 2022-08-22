@@ -11,7 +11,7 @@ class LstmModel(BaseModel):
         self.output = nn.Linear(self.hidden_size, self.output_size)
 
     def forward(self, word_vectors):
-        inputs = self.embedding(word_vectors)
+        inputs = self.dropout(self.embedding(word_vectors))
         # Converting from shape (batch_size, seq_len,  embed_size) to (seq_len, batch_size,  embed_size)
         inputs = inputs.permute(1, 0, 2)
         # Initializing hidden and cell state for lstm
