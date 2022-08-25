@@ -18,19 +18,6 @@ class BaseModel(nn.Module):
         self.dropout = nn.Dropout(self.config.DROPOUT)
         self.embedding = nn.Embedding(self.vocab_size, self.embedding_size)
     
-    def get_optimizer(self):
-        if self.config.OPTIMIZER == 'adam':
-            return torch.optim.Adam(lr=self.config.LEARNING_RATE)
-        elif self.config.OPTIMIZER == 'adadelta':
-            return torch.optim.Adadelta(lr=self.config.LEARNING_RATE)
-        elif self.config.OPTIMIZER == 'adagrad':
-            return torch.optim.Adagrad(lr=self.config.LEARNING_RATE)
-        elif self.config.OPTIMIZER == 'rmsprop':
-            return torch.optim.RMSprop(lr=self.config.LEARNING_RATE)
-        elif self.config.OPTIMIZER == 'sgd':
-            return torch.optim.SGD(lr=self.config.LEARNING_RATE)
-        return None
-    
     def calculate_loss(self, prediction, target):
         loss = nn.CrossEntropyLoss()
         output = loss(prediction, target)

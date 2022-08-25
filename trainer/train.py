@@ -1,4 +1,5 @@
 import os
+import torch
 from utils.split_data import train_test_split
 from data import TrainData, EvalData
 from models import LstmModel, LstmAttenModel, RCnnModel, TextCnnModel, TransformerModel
@@ -47,9 +48,21 @@ class Train:
         elif self.config.MODEL == 'transformer':
             self.model = TransformerModel(self.config, self._vocab_size, self._output_size)
 
+    def get_optimizer(self):
+        if self.config.OPTIMIZER == 'adam':
+            return torch.optim.Adam(lr=self.config.LEARNING_RATE)
+        elif self.config.OPTIMIZER == 'adadelta':
+            return torch.optim.Adadelta(lr=self.config.LEARNING_RATE)
+        elif self.config.OPTIMIZER == 'adagrad':
+            return torch.optim.Adagrad(lr=self.config.LEARNING_RATE)
+        elif self.config.OPTIMIZER == 'rmsprop':
+            return torch.optim.RMSprop(lr=self.config.LEARNING_RATE)
+        elif self.config.OPTIMIZER == 'sgd':
+            return torch.optim.SGD(lr=self.config.LEARNING_RATE)
+        return None
+
     def train(self):
         for epoch in range(self.config.EPOCHS):
             print(f'EPOCH: {epoch + 1}/{self.config.EPOCHS}')
             for batch in self.train_data_obj.get_batch(self.train_text, self.train_labels):
-                result = self.model(batch['x'])
-                print(result.shape)
+                prediction = self.model(batch['x'])
