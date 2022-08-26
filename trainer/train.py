@@ -50,19 +50,24 @@ class Train:
 
     def get_optimizer(self):
         if self.config.OPTIMIZER == 'adam':
-            return torch.optim.Adam(lr=self.config.LEARNING_RATE)
+            return torch.optim.Adam(self.model.parameters(), lr=self.config.LEARNING_RATE)
         elif self.config.OPTIMIZER == 'adadelta':
-            return torch.optim.Adadelta(lr=self.config.LEARNING_RATE)
+            return torch.optim.Adadelta(self.model.parameters(), lr=self.config.LEARNING_RATE)
         elif self.config.OPTIMIZER == 'adagrad':
-            return torch.optim.Adagrad(lr=self.config.LEARNING_RATE)
+            return torch.optim.Adagrad(self.model.parameters(), lr=self.config.LEARNING_RATE)
         elif self.config.OPTIMIZER == 'rmsprop':
-            return torch.optim.RMSprop(lr=self.config.LEARNING_RATE)
+            return torch.optim.RMSprop(self.model.parameters(), lr=self.config.LEARNING_RATE)
         elif self.config.OPTIMIZER == 'sgd':
-            return torch.optim.SGD(lr=self.config.LEARNING_RATE)
+            return torch.optim.SGD(self.model.parameters(), lr=self.config.LEARNING_RATE)
         return None
 
     def train(self):
+        optimizer = self.get_optimizer()
         for epoch in range(self.config.EPOCHS):
             print(f'EPOCH: {epoch + 1}/{self.config.EPOCHS}')
+            i = 0
             for batch in self.train_data_obj.get_batch(self.train_text, self.train_labels):
                 prediction = self.model(batch['x'])
+                prediction = torch.max(prediction, 1)[1]
+                optimizer.zero_grad()
+                accuracy =
