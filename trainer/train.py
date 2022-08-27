@@ -28,6 +28,7 @@ class Train:
                                                                                train=True)
         self.eval_text, self.eval_labels = self.eval_data_obj.generate_data(self.eval_data, self.eval_file)
         self.get_model()
+        self.optimizer = self.get_optimizer()
 
     def load_data(self):
         self.train_data_obj = TrainData(self.config)
@@ -67,20 +68,23 @@ class Train:
             return torch.optim.SGD(self.model.parameters(), lr=self.config.LEARNING_RATE)
         return None
 
+    def train_epoch(self):
+        losses = list()
+        accuracies = list()
+        i = 0
+        for batch in self.train_data_obj.get_batch(self.train_text, self.train_labels):
+            self.optimizer.zero_grad()
+            predictions = self.model(batch['x'])
+            predictions = torch.max(predictions, 1)[1]
+            acc = accuracy(predictions, batch['y'])
+            loss = self.model.calculate_loss(predictions, batch['y'])
+            loss.backward()
+            self.optimizer.step()
+            if i == 0:
+                print(loss)
+            i += 1
+
     def train(self):
-        optimizer = self.get_optimizer()
         for epoch in range(self.config.EPOCHS):
             print(f'EPOCH: {epoch + 1}/{self.config.EPOCHS}')
-            i = 0
-            for batch in self.train_data_obj.get_batch(self.train_text, self.train_labels):
-                optimizer.zero_grad()
-                predictions = self.model(batch['x'])
-                predictions = torch.max(predictions, 1)[1]
-                acc = accuracy(predictions, batch['y'])
-                loss = self.model.calculate_loss(predictions, batch['y'])
-                loss.backward()
-                if i == 0:
-                    print(acc)
-                    print(predictions)
-                    print(batch['y'])
-                i += 1
+            self.train_epoch()
