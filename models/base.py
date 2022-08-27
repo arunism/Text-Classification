@@ -19,6 +19,6 @@ class BaseModel(nn.Module):
         self.embedding = nn.Embedding(self.vocab_size, self.embedding_size)
     
     def calculate_loss(self, prediction, target):
-        loss = nn.CrossEntropyLoss()
-        output = loss(prediction, target)
-        return output
+        criterion = nn.CrossEntropyLoss()
+        loss = criterion(prediction, target)
+        return loss

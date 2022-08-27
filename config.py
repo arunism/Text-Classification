@@ -1,4 +1,4 @@
-# You can choose between ['lstm', 'lstm_atten', 'rcnn', 'textcnn', 'transformer']
+# You can choose between ['lstm', 'lstm_atten', 'rcnn', 'charcnn', 'textcnn', 'transformer', 'fasttext']
 MODEL = 'lstm'
 # You can choose between ['adam', 'adadelta', 'adagrad', 'rmsprop', 'sgd']
 OPTIMIZER = 'adam'
