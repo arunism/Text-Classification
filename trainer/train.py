@@ -56,35 +56,37 @@ class Train:
             self.model = FastTextModel(self.config, self._vocab_size, self._output_size)
 
     def get_optimizer(self):
-        if self.config.OPTIMIZER == 'adam':
+        if self.config.OPTIMIZER.lower() == 'adam':
             return torch.optim.Adam(self.model.parameters(), lr=self.config.LEARNING_RATE)
-        elif self.config.OPTIMIZER == 'adadelta':
+        elif self.config.OPTIMIZER.lower() == 'adadelta':
             return torch.optim.Adadelta(self.model.parameters(), lr=self.config.LEARNING_RATE)
-        elif self.config.OPTIMIZER == 'adagrad':
+        elif self.config.OPTIMIZER.lower() == 'adagrad':
             return torch.optim.Adagrad(self.model.parameters(), lr=self.config.LEARNING_RATE)
-        elif self.config.OPTIMIZER == 'rmsprop':
+        elif self.config.OPTIMIZER.lower() == 'rmsprop':
             return torch.optim.RMSprop(self.model.parameters(), lr=self.config.LEARNING_RATE)
-        elif self.config.OPTIMIZER == 'sgd':
+        elif self.config.OPTIMIZER.lower() == 'sgd':
             return torch.optim.SGD(self.model.parameters(), lr=self.config.LEARNING_RATE)
         return None
 
     def train_epoch(self):
-        losses = list()
-        accuracies = list()
-        i = 0
+        epoch_loss = 0
+        epoch_accuracy = 0
         for batch in self.train_data_obj.get_batch(self.train_text, self.train_labels):
             self.optimizer.zero_grad()
             predictions = self.model(batch['x'])
-            predictions = torch.max(predictions, 1)[1]
+            predictions = torch.max(predictions, 1)[1].type(torch.float64)
+            predictions.requires_grad = True
             acc = accuracy(predictions, batch['y'])
             loss = self.model.calculate_loss(predictions, batch['y'])
             loss.backward()
             self.optimizer.step()
-            if i == 0:
-                print(loss)
-            i += 1
+            epoch_accuracy += acc
+            epoch_loss += loss
+            return epoch_accuracy, epoch_loss
 
     def train(self):
         for epoch in range(self.config.EPOCHS):
-            print(f'EPOCH: {epoch + 1}/{self.config.EPOCHS}')
-            self.train_epoch()
+            print(f'EPOCH: {epoch + 1}/{self.config.EPOCHS} |', end=' ')
+            train_accuracy, train_loss = self.train_epoch()
+            print(f'Train Accuracy: {train_accuracy} | Train Loss: {train_loss}', end=' ')
+            print()
