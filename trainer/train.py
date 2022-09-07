@@ -69,8 +69,7 @@ class Train:
         return None
 
     def train_epoch(self):
-        epoch_loss = 0
-        epoch_accuracy = 0
+        train_loss, train_accuracy = 0, 0
         for batch in self.train_data_obj.get_batch(self.train_text, self.train_labels):
             self.optimizer.zero_grad()
             predictions = self.model(batch['x'])
@@ -80,13 +79,13 @@ class Train:
             loss = self.model.calculate_loss(predictions, batch['y'])
             loss.backward()
             self.optimizer.step()
-            epoch_accuracy += acc
-            epoch_loss += loss
-            return epoch_accuracy, epoch_loss
+            train_accuracy += acc.item()
+            train_loss += loss.item()
+        return train_accuracy, train_loss
 
     def train(self):
         for epoch in range(self.config.EPOCHS):
-            print(f'EPOCH: {epoch + 1}/{self.config.EPOCHS} |', end=' ')
+            self.model.train()
+            print(f'EPOCH: {epoch + 1}/{self.config.EPOCHS} ===> ', end=' ')
             train_accuracy, train_loss = self.train_epoch()
-            print(f'Train Accuracy: {train_accuracy} | Train Loss: {train_loss}', end=' ')
-            print()
+            print(f'Train Accuracy:{train_accuracy: .3f} | Train Loss:{train_loss: .3f}')

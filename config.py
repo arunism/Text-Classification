@@ -4,7 +4,7 @@ MODEL = 'lstm'
 OPTIMIZER = 'adam'
 # You can choose between ['uniform', 'normal'] distributions
 WEIGHT_INITIALIZATION = 'uniform'
-EPOCHS = 10
+EPOCHS = 1
 LEARNING_RATE = 0.001
 SEQUENCE_LEN = 350
 EMBED_SIZE = 200

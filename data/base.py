@@ -1,5 +1,6 @@
 import os
 import re
+import math
 import torch
 import pickle
 import numpy as np
@@ -114,10 +115,15 @@ class DataBase:
         a = np.arange(len(x))
         np.random.shuffle(a)
         x, y = x[a], y[a]
-        num_of_batches = len(x) // self._batch_size
+        num_of_batches = math.ceil(len(x) / self._batch_size)
+        remaining_data_count = len(x)
         for i in range(num_of_batches):
             start = i*self._batch_size
-            end = start + self._batch_size
+            if remaining_data_count >= self._batch_size:
+                end = start + self._batch_size
+                remaining_data_count -= self._batch_size
+            else:
+                end = start + remaining_data_count
             batch_x = torch.from_numpy(x[start:end])
             batch_y = torch.from_numpy(y[start:end])
             yield dict(x=batch_x, y=batch_y)
