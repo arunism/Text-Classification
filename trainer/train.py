@@ -1,5 +1,6 @@
 import os
 import torch
+from tqdm import tqdm
 from data import TrainData, EvalData
 from utils.metrics import accuracy
 from utils.split_data import train_test_split
@@ -69,23 +70,24 @@ class Train:
         return None
 
     def train_epoch(self):
-        train_loss, train_accuracy = 0, 0
-        for batch in self.train_data_obj.get_batch(self.train_text, self.train_labels):
-            self.optimizer.zero_grad()
+        train_loss, train_accuracy, i = 0, 0, 0
+        self.model.train()
+        for batch in tqdm(self.train_data_obj.get_batch(self.train_text, self.train_labels)):
             predictions = self.model(batch['x'])
             predictions = torch.max(predictions, 1)[1].type(torch.float64)
             predictions.requires_grad = True
             acc = accuracy(predictions, batch['y'])
             loss = self.model.calculate_loss(predictions, batch['y'])
+            self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
             train_accuracy += acc.item()
             train_loss += loss.item()
-        return train_accuracy, train_loss
+            i += 1
+        return train_accuracy/i, train_loss/i
 
     def train(self):
         for epoch in range(self.config.EPOCHS):
-            self.model.train()
             print(f'EPOCH: {epoch + 1}/{self.config.EPOCHS} ===> ', end=' ')
             train_accuracy, train_loss = self.train_epoch()
             print(f'Train Accuracy:{train_accuracy: .3f} | Train Loss:{train_loss: .3f}')

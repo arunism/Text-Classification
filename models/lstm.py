@@ -15,8 +15,8 @@ class LstmModel(BaseModel):
         # Converting from shape (batch_size, seq_len,  embed_size) to (seq_len, batch_size,  embed_size)
         inputs = inputs.permute(1, 0, 2)
         # Initializing hidden and cell state for lstm
-        # h0 = Variable(torch.zeros(self.num_layers, self.batch_size, self.hidden_size).to(self.device))
-        # c0 = Variable(torch.zeros(self.num_layers, self.batch_size, self.hidden_size).to(self.device))
-        output, (hidden, cell) = self.lstm(inputs)
+        h0 = Variable(torch.zeros(self.num_layers, self.batch_size, self.hidden_size).to(self.device))
+        c0 = Variable(torch.zeros(self.num_layers, self.batch_size, self.hidden_size).to(self.device))
+        output, (hidden, cell) = self.lstm(inputs, (h0, c0))
         output = self.output(hidden[-1])
         return output
